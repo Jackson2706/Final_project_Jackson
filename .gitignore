@@ -1,4 +1,6 @@
 test.py
 *.pyc
+*.log
 frames
 .vscode
+config/constant.py
