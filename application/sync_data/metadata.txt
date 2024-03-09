@@ -1,0 +1,32 @@
+##### Object dictionary #####
+{
+    "person": 0,
+    "bicycle": 1,
+    "car": 2,
+    "motorcycle": 3,
+    "bus": 4,
+    "truck": 5,
+    "unknown": 7
+}
+
+
+
+##### Traffic light config ######
+{
+    "Name": "Traffic Light 1 - Nga tu ABC",
+    "ID": 1,
+    "Location" : [4,37,23,78]    #[x1,y1,x2,y2]
+    "createdAt" 1212423489     # Get miliseconds
+}
+
+
+
+##### Line config #####
+{
+    "Name": "Gate 1 - Nga tu ABC",
+    "ID": 1,
+    "Location" : [4,37,23,78]    #[x1,y1,x2,y2]
+    "attribute": ["car", "motorcycle"]
+    "createdAt" 1212423489     # Get miliseconds
+}
+
