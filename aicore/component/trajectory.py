@@ -1,7 +1,7 @@
 from datetime import datetime
 
 class Trajectory:
-    def __init__(self, x_center: int, y_center: int, width: int, height: int, label: int, time_stamp: datetime):
+    def __init__(self, x_center: int, y_center: int, width: int, height: int, label: str, conf: float, time_stamp: datetime):
         """
         Represents a trajectory with a bounding box, a label, and a timestamp.
 
@@ -18,16 +18,21 @@ class Trajectory:
         self.width = width
         self.height = height
         self.label = label
+        self.conf = conf
         self.timestamp = time_stamp
+
+
+    def get_trajectory(self):
+        return [self.x_center, self.y_center, self.width, self.height, self.label, self.conf, self.timestamp]
 
     def get_bounding_box(self):
         """
         Get the bounding box coordinates and label.
 
         Returns:
-        - tuple: A tuple containing (x_center, y_center, width, height, label) of the bounding box.
+        - tuple: A tuple containing (x_center, y_center, width, height, label, confidence score) of the bounding box.
         """
-        return (self.x_center, self.y_center, self.width, self.height, self.label)
+        return (self.x_center, self.y_center, self.width, self.height, self.label, self.conf)
     
     def get_timestamp(self):
         """
@@ -37,3 +42,10 @@ class Trajectory:
         - datetime: The timestamp indicating when the trajectory was observed.
         """
         return self.timestamp
+    def __str__(self):
+        """
+        Returns a string representation of the Trajectory object.
+        """
+        return f"Trajectory: [Label: {self.label}, Confidence: {self.conf}, Bounding Box: " \
+               f"(X: {self.x_center}, Y: {self.y_center}, Width: {self.width}, Height: {self.height}), " \
+               f"Timestamp: {self.timestamp}]"

@@ -14,6 +14,7 @@ class Detected_Object:
         """
         self.track_id = track_id
         self.trajectories = trajectories
+        self.label = label
         self.statement = 0 # default 0: unknown      1: moving       2: stationary
 
         self.sensitive = 15
@@ -28,6 +29,9 @@ class Detected_Object:
         """
         return self.track_id
     
+    def add_trajectory(self, trajectory):
+        self.trajectories.append(trajectory)
+
     def get_trajectories(self):
         """
         Get the list of trajectories of the detected object.
@@ -77,3 +81,24 @@ class Detected_Object:
         """
         _ = self.get_current_speed()
         return self.statement
+
+    def get_last_trajectory(self):
+        """
+        Get the timestamp of the last Trajectory in the list.
+
+        Returns:
+        - datetime: The timestamp of the last Trajectory.
+        """
+        if not self.trajectories:
+            return None
+        return self.trajectories[-1]
+    
+    def __str__(self):
+        """
+        String representation of the Detected_Object.
+
+        Returns:
+        - str: A string containing information about the Detected_Object.
+        """
+        trajectory_info = "\n".join([f"Trajectory {i+1}: {trajectory}" for i, trajectory in enumerate(self.trajectories)])
+        return f"Detected_Object - Track ID: {self.track_id}, Label: {self.label}, Statement: {self.statement}\nTrajectories:\n{trajectory_info}"
