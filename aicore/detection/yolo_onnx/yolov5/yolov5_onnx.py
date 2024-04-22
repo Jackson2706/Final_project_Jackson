@@ -29,11 +29,11 @@ class Yolov5_Onnx(YoloOnnxDetector):
         grid_size = out_data.shape[1]
 
         x_min = out_data[0, :, 0]
-        y_min = output_data[0, :, 1]
-        x_max = output_data[0, :, 2]
-        y_max = output_data[0, :, 3]
-        confidence = output_data[0, :, 4]
-        class_probs = output_data[0, :, 5:]
+        y_min = out_data[0, :, 1]
+        x_max = out_data[0, :, 2]
+        y_max = out_data[0, :, 3]
+        confidence = out_data[0, :, 4]
+        class_probs = out_data[0, :, 5:]
 
         class_id = np.argmax(class_probs, axis=1)
         class_prob = np.max(class_probs * confidence[:, np.newaxis], axis=1)
@@ -49,8 +49,7 @@ class Yolov5_Onnx(YoloOnnxDetector):
                 label = self.names[class_id[i]]
                 conf=class_prob[i],
                 time_stamp=datetime.now()
-            ) 
-            for i in range(len(mask)) if mask[i]
+            ) for i in range(len(mask)) if mask[i]
         ]
 
         if detections:
