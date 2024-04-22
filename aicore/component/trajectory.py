@@ -27,12 +27,16 @@ class Trajectory:
 
     def get_bounding_box(self):
         """
-        Get the bounding box coordinates and label.
+        Get the bounding box coordinates.
 
         Returns:
-        - tuple: A tuple containing (x_center, y_center, width, height, label, confidence score) of the bounding box.
+        - tuple: A tuple containing (x_center, y_center, width, height) of the bounding box.
         """
-        return (self.x_center, self.y_center, self.width, self.height, self.label, self.conf)
+        return [self.x_center, self.y_center, self.width, self.height]
+
+
+    def get_confidence_score(self):
+        return self.conf
     
     def get_timestamp(self):
         """
