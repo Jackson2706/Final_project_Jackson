@@ -3,7 +3,7 @@ import numpy as np
 import pycuda.driver as cuda
 from datetime import datetime
 
-from aicore.detection.yolo.yolo_trt import YoloVehicleDetector
+from aicore.detection.yolo_trt.yolo_trt import YoloVehicleDetector
 from aicore.component.trajectory import Trajectory
 
 
