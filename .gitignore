@@ -8,4 +8,5 @@ test.jpg
 *.jpg
 *.txt
 *.mp4
-.idea
+.idea/*
+*.onnx
