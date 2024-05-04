@@ -4,7 +4,7 @@ import pycuda.driver as cuda
 from datetime import datetime
 
 from aicore.detection.yolo_trt.yolo_trt import YoloVehicleDetector
-from aicore.component.trajectory import Trajectory
+from aicore.component.Trajectory import Trajectory
 
 
 class Yolov5_TRT(YoloVehicleDetector):

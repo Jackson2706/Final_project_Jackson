@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from aicore.component.Point import Point
 class Trajectory:
     def __init__(self, x_center: int, y_center: int, width: int, height: int, label: str, conf: float, time_stamp: datetime):
         """
@@ -24,6 +25,9 @@ class Trajectory:
 
     def get_trajectory(self):
         return [self.x_center, self.y_center, self.width, self.height, self.label, self.conf, self.timestamp]
+
+    def get_position(self):
+        return Point(self.x_center, self.y_center)
 
     def get_bounding_box(self):
         """
