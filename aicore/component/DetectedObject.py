@@ -14,6 +14,7 @@ class DetectedObject:
         - trajectories (List[Trajectory]): A list of Trajectory objects representing the object's motion over time.
         """
         self.track_id = track_id
+        self.label = label
         self.trajectories = trajectories
         self.statement = 0  # default 0: unknown      1: moving       2: stationary
 
@@ -28,6 +29,9 @@ class DetectedObject:
         - int: The unique identifier for the detected object.
         """
         return self.track_id
+
+    def get_label(self):
+        return  self.label
 
     def get_trajectories(self):
         """
