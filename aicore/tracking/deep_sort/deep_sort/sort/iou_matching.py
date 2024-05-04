@@ -77,5 +77,6 @@ def iou_cost(tracks, detections, track_indices=None,
 
         bbox = tracks[track_idx].to_tlwh()
         candidates = np.asarray([detections[i].tlwh for i in detection_indices])
-        cost_matrix[row, :] = 1. - iou(bbox, candidates)
+        iou_score = iou(bbox, candidates)
+        cost_matrix[row, :] = 1. - (iou_score.real if isinstance(iou_score, complex) else iou_score)
     return cost_matrix

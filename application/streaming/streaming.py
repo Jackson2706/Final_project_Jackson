@@ -4,10 +4,9 @@ from os.path import exists, join
 from os import mkdir, remove
 from time import time
 
-from config.constant import CAMERA_URL, MAX_QUEUE_SIZE, FRAME_DIRS, STREAMING_LOG_PATH
 from logger.system_logger import SystemLogger
 class IPCameraFrameRecoder:
-    def __init__(self,camera_url = CAMERA_URL, max_queue_size = MAX_QUEUE_SIZE, frame_dir = FRAME_DIRS, log_file = STREAMING_LOG_PATH):
+    def __init__(self,camera_url, max_queue_size, frame_dir, log_file):
         self.cap = VideoCapture(camera_url)
         self.max_queue_size = max_queue_size
         self.frame_dir = frame_dir
