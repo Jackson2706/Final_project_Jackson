@@ -1,15 +1,20 @@
 import cv2
 
 from application.streaming.streaming import IPCameraFrameRecoder
-from config.constant import CAMERA_URL, MAX_FRAME_QUEUE_SIZE, TENSORRT_LIB_PATH, TENSORRT_MODEL_ENGINE, CATEGORY, LEN_ALL_RESULT, LEN_ONE_RESULT, IOU_THRESHOLD, CONF_THRESH, ONNX_MODEL_PATH, INPUT_SHAPE, DEEPSORT_CONFIG_PATH
+from config.constant import CAMERA_URL, MAX_FRAME_QUEUE_SIZE, YOLOV5_ONNX_MODEL_PATH, YOLOV5_ONNX_INPUT_SHAPE, \
+    YOLOV5_ONNX_CONF_THRESHOLD, YOLOV5_ONNX_IOU_THRESHOLD, YOLOV5_ONNX_LABEL_LIST, DEEPSORT_CONFIG_PATH, SELECTED_CATEGORY, \
+    SELECTED_DETECTOR_NAME, SELECTED_TRACKER_NAME, SSD300_ONNX_MODEL_PATH, SSD300_ONNX_INPUT_SHAPE, SSD300_ONNX_LABEL_LIST, \
+    SSD300_ONNX_CONF_THRESHOLD, SSD300_ONNX_IOU_THRESHOLD
+
 from aicore.detection.yolo_onnx.yolov5.yolov5_onnx import Yolov5_Onnx
+from aicore.detection.SSD_onnx.SSD300.SSD300_onnx_detector import SSD300OnnxDetector
 from aicore.tracking.deep_sort.tracker import DeepSortInference, draw_bboxes
 ## Test
 from aicore.logic_shape_filter.filter.LineFilter import LineFilter
 from aicore.component.Line import Line
 from aicore.component.Point import Point
 
-line_location = Line(Point(45, 411), Point(551,455))
+line_location = Line(Point(45, 411), Point(551, 455))
 linefilter = LineFilter("Test_line", 1, line_location, 0, 0, ["car"], -1)
 ####
 
@@ -18,17 +23,30 @@ cap = IPCameraFrameRecoder(camera_url=CAMERA_URL,
                            frame_dir="./frame_dir",
                            log_file="./streaming_loger.txt")
 
-vehicle_detector = Yolov5_Onnx(onnx_model_path=ONNX_MODEL_PATH,
-                                    input_shape=INPUT_SHAPE,
-                                    confidence_threshold=CONF_THRESH,
-                                    nms_threshold=IOU_THRESHOLD,
-                                    label_list={index: value for index, value in enumerate(CATEGORY)})
-vehicle_tracker = DeepSortInference(config_path=DEEPSORT_CONFIG_PATH)
+if SELECTED_DETECTOR_NAME == "YOLOV5_ONNX":
+    vehicle_detector = Yolov5_Onnx(onnx_model_path=YOLOV5_ONNX_MODEL_PATH,
+                               input_shape=YOLOV5_ONNX_INPUT_SHAPE,
+                               confidence_threshold=YOLOV5_ONNX_CONF_THRESHOLD,
+                               nms_threshold=YOLOV5_ONNX_IOU_THRESHOLD,
+                               label_list=YOLOV5_ONNX_LABEL_LIST,
+                               selected_class=SELECTED_CATEGORY)
+elif SELECTED_DETECTOR_NAME == "SSD300_ONNX":
+    vehicle_detector = SSD300OnnxDetector(ssd_onnx_model_path=SSD300_ONNX_MODEL_PATH, input_shape=SSD300_ONNX_INPUT_SHAPE,
+                                          confidence_threshold=SSD300_ONNX_CONF_THRESHOLD, nms_threshold=SSD300_ONNX_IOU_THRESHOLD,
+                                          label_list=SSD300_ONNX_LABEL_LIST, selected_categories=SELECTED_CATEGORY)
+else:
+    vehicle_detector = None
+if SELECTED_TRACKER_NAME == "DEEPSORT":
+    vehicle_tracker = DeepSortInference(config_path=DEEPSORT_CONFIG_PATH)
+else:
+    vehicle_tracker = None
+
 for frame in cap.read_frame():
     result = vehicle_detector.run_native_inference(frame)
     result = vehicle_tracker.update(bboxes_traject=result, image=frame)
-    frame = cv2.resize(frame, INPUT_SHAPE)
     frame = draw_bboxes(image=frame, bboxes=result)
+    frame = cv2.resize(frame, (900, 900))
+
     cv2.imshow("test", frame)
     filter_result = linefilter.make_filtering(result)
     print(len(filter_result))
