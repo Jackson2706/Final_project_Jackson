@@ -1,8 +1,11 @@
 from abc import ABC
 import onnxruntime
+from typing import List
+
 
 class YoloOnnxDetector(ABC):
-    def __init__(self, onnx_model_path: str, input_shape: tuple, confidence_threshold: float, nms_threshold: float, label_list: dict):
+    def __init__(self, onnx_model_path: str, input_shape: tuple, confidence_threshold: float, nms_threshold: float,
+                 label_list: List, selected_class: List):
         """
         Initialize the YoloOnnxDetector class with required parameters.
 
@@ -19,6 +22,7 @@ class YoloOnnxDetector(ABC):
         self.confidence_threshold = confidence_threshold
         self.nms_threshold = nms_threshold
         self.names = label_list
+        self.seleted_class = selected_class
 
     def _preprocessing(self, frame):
         """
@@ -65,7 +69,7 @@ class YoloOnnxDetector(ABC):
         results = self._postprocessing(out_data=output_data)
         return results
 
-    def drawbox(self, frame, results): 
+    def drawbox(self, frame, results):
         """
         Draw bounding boxes on the input frame based on the results.
 

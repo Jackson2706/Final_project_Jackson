@@ -1,4 +1,6 @@
 from datetime import datetime
+from typing import List
+
 import numpy as np
 import cv2
 
@@ -6,8 +8,10 @@ from aicore.detection.yolo_onnx.yolo_onnx import YoloOnnxDetector
 from aicore.component.Trajectory import Trajectory
 
 class Yolov5_Onnx(YoloOnnxDetector):
-    def __init__(self, onnx_model_path: str, input_shape: tuple, confidence_threshold: float, nms_threshold: float, label_list: dict):
-        super().__init__(onnx_model_path, input_shape, confidence_threshold, nms_threshold, label_list)
+
+    def __init__(self, onnx_model_path: str, input_shape: tuple, confidence_threshold: float, nms_threshold: float,
+                 label_list: List, selected_class: List):
+        super().__init__(onnx_model_path, input_shape, confidence_threshold, nms_threshold, label_list, selected_class)
 
     def _preprocessing(self, frame):
         original_height, original_width = frame.shape[:2]
@@ -51,7 +55,7 @@ class Yolov5_Onnx(YoloOnnxDetector):
                 label=self.names[class_id[i]],
                 conf=class_prob[i],
                 time_stamp=datetime.now()
-            ) for i in range(len(mask)) if mask[i]
+            ) for i in range(len(mask)) if (mask[i] and self.names[class_id[i]] in self.seleted_class)
         ]
 
         if detections:
