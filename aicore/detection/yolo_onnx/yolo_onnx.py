@@ -62,7 +62,7 @@ class YoloOnnxDetector(ABC):
         """
         input_data = self._preprocessing(frame=frame)
         output_data = self._execute(input_data=input_data)
-        results = self._postprocessing(output_data=output_data)
+        results = self._postprocessing(out_data=output_data)
         return results
 
     def drawbox(self, frame, results): 

@@ -28,10 +28,10 @@ class Yolov5_Onnx(YoloOnnxDetector):
         detections = []
         grid_size = out_data.shape[1]
 
-        x_min = out_data[0, :, 0]
-        y_min = out_data[0, :, 1]
-        x_max = out_data[0, :, 2]
-        y_max = out_data[0, :, 3]
+        x_center = out_data[0, :, 0]
+        y_center = out_data[0, :, 1]
+        w = out_data[0, :, 2]
+        h = out_data[0, :, 3]
         confidence = out_data[0, :, 4]
         class_probs = out_data[0, :, 5:]
 
@@ -42,11 +42,11 @@ class Yolov5_Onnx(YoloOnnxDetector):
         mask = class_prob > self.confidence_threshold
         detections = [
             Trajectory(
-                x_center=x_min[i] - (x_max[i]) / 2,
-                y_center=y_min[i] - (y_max[i]) / 2,
-                width=x_max[i] + x_min[i] - (x_max[i]) / 2,
-                height=y_max[i] + y_min[i] - (y_max[i]) / 2,
-                label = self.names[class_id[i]]
+                x_center=x_center[i],
+                y_center=y_center[i],
+                width=w[i],
+                height=h[i],
+                label = self.names[class_id[i]],
                 conf=class_prob[i],
                 time_stamp=datetime.now()
             ) for i in range(len(mask)) if mask[i]
@@ -65,3 +65,17 @@ class Yolov5_Onnx(YoloOnnxDetector):
         return detections
 
     
+    def drawbox(self, frame, results):
+        image_draw = cv2.resize(frame, self.input_shape)
+        for trajectory in results:
+            x_center, y_center, w, h, lbl, conf, timestamp = trajectory.get_trajectory()
+            x = x_center - w/2
+            y = y_center - h/2
+            x_max = x_center + w/2
+            y_max = y_center + h/2
+            class_name = lbl
+            cv2.rectangle(image_draw, (int(x), int(y)), (int(x_max), int(y_max)), (0, 255, 0), 1)
+            cv2.putText(image_draw, class_name, (int(x), int(y) - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.75, [225, 255, 255],
+                    thickness=2)
+            
+        return image_draw
