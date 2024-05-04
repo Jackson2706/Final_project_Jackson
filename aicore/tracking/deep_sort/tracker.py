@@ -25,7 +25,8 @@ def draw_bboxes(image, bboxes, line_thickness=None):
         0.002 * (image.shape[0] + image.shape[1]) * 0.5) + 1
 
     for i, bbox in bboxes.items():
-        x, y, w, h, label, conf, _ = bbox.get_last_trajectory().get_trajectory()
+        x, y, w, h, _, conf, _ = bbox.get_last_trajectory().get_trajectory()
+        label = bbox.get_label()
         track_id = bbox.get_track_id()
         color = (0, 255, 0)
         x1 = int(x - w / 2)
