@@ -10,7 +10,9 @@ class Yolov5_Onnx(YoloOnnxDetector):
         super().__init__(onnx_model_path, input_shape, confidence_threshold, nms_threshold, label_list)
 
     def _preprocessing(self, frame):
-        self.img_height, self.img_width = frame.shape[:2]
+        original_height, original_width = frame.shape[:2]
+        self.resize_ratio_w = original_width / self.input_shape[0]
+        self.resize_ratio_h = original_height / self.input_shape[1]
 
         input_img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
@@ -24,7 +26,7 @@ class Yolov5_Onnx(YoloOnnxDetector):
 
         return input_tensor
 
-    def _postprocessing(self, out_data): 
+    def _postprocessing(self, out_data):
         detections = []
         grid_size = out_data.shape[1]
 
@@ -42,11 +44,11 @@ class Yolov5_Onnx(YoloOnnxDetector):
         mask = class_prob > self.confidence_threshold
         detections = [
             Trajectory(
-                x_center=x_center[i],
-                y_center=y_center[i],
-                width=w[i],
-                height=h[i],
-                label = self.names[class_id[i]],
+                x_center=x_center[i] * self.resize_ratio_w,
+                y_center=y_center[i] * self.resize_ratio_h,
+                width=w[i] * self.resize_ratio_w,
+                height=h[i] * self.resize_ratio_h,
+                label=self.names[class_id[i]],
                 conf=class_prob[i],
                 time_stamp=datetime.now()
             ) for i in range(len(mask)) if mask[i]
@@ -55,16 +57,16 @@ class Yolov5_Onnx(YoloOnnxDetector):
         if detections:
             boxes = np.array([detection.get_bounding_box() for detection in detections])
             confidences = np.array([detection.get_confidence_score() for detection in detections])
-            indices = cv2.dnn.NMSBoxes(boxes.tolist(), confidences.tolist(), self.confidence_threshold, self.nms_threshold)
+            indices = cv2.dnn.NMSBoxes(boxes.tolist(), confidences.tolist(), self.confidence_threshold,
+                                       self.nms_threshold)
             if indices.size > 0:
                 indices = indices.flatten()
                 detections = [detections[i] for i in indices]
             else:
                 detections = []
-        
+
         return detections
 
-    
     def drawbox(self, frame, results):
         image_draw = cv2.resize(frame, self.input_shape)
         for trajectory in results:
