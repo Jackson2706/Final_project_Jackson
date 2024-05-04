@@ -1,8 +1,11 @@
 from datetime import datetime
 
 from aicore.component.Point import Point
+
+
 class Trajectory:
-    def __init__(self, x_center: int, y_center: int, width: int, height: int, label: str, conf: float, time_stamp: datetime):
+    def __init__(self, x_center: int, y_center: int, width: int, height: int, label: str, conf: float,
+                 time_stamp: datetime):
         """
         Represents a trajectory with a bounding box, a label, and a timestamp.
 
@@ -14,20 +17,20 @@ class Trajectory:
         - label (int): The label or class of the trajectory.
         - time_stamp (datetime): The timestamp indicating when the trajectory was observed.
         """
-        self.x_center = x_center
-        self.y_center = y_center
-        self.width = width
-        self.height = height
-        self.label = label
-        self.conf = conf
-        self.timestamp = time_stamp
+        self._x_center = x_center
+        self._y_center = y_center
+        self._width = width
+        self._height = height
+        self._label = label
+        self._conf = conf
+        self._timestamp = time_stamp
 
 
     def get_trajectory(self):
-        return [self.x_center, self.y_center, self.width, self.height, self.label, self.conf, self.timestamp]
+        return [self._x_center, self._y_center, self._width, self._height, self._label, self._conf, self._timestamp]
 
     def get_position(self):
-        return Point(self.x_center, self.y_center)
+        return Point(self._x_center, self._y_center)
 
     def get_bounding_box(self):
         """
@@ -36,12 +39,11 @@ class Trajectory:
         Returns:
         - tuple: A tuple containing (x_center, y_center, width, height) of the bounding box.
         """
-        return [self.x_center, self.y_center, self.width, self.height]
-
+        return [self._x_center, self._y_center, self._width, self._height]
 
     def get_confidence_score(self):
-        return self.conf
-    
+        return self._conf
+
     def get_timestamp(self):
         """
         Get the timestamp of the trajectory.
@@ -49,11 +51,12 @@ class Trajectory:
         Returns:
         - datetime: The timestamp indicating when the trajectory was observed.
         """
-        return self.timestamp
+        return self._timestamp
+
     def __str__(self):
         """
         Returns a string representation of the Trajectory object.
         """
-        return f"Trajectory: [Label: {self.label}, Confidence: {self.conf}, Bounding Box: " \
-               f"(X: {self.x_center}, Y: {self.y_center}, Width: {self.width}, Height: {self.height}), " \
-               f"Timestamp: {self.timestamp}]"
+        return f"Trajectory: [Label: {self._label}, Confidence: {self._conf}, Bounding Box: " \
+               f"(X: {self._x_center}, Y: {self._y_center}, Width: {self._width}, Height: {self._height}), " \
+               f"Timestamp: {self._timestamp}]"
