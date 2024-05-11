@@ -12,7 +12,7 @@ class LogicShapeFilter(ABC):
         self.created = created_at
         self.updated = updated_at
 
-    def make_filtering(self, source_filter: Dict[Any, DetectedObject]):
+    def make_filtering(self, source_filter: Dict[Any, DetectedObject], current_frame = None):
         pass
 
     def equals(self):

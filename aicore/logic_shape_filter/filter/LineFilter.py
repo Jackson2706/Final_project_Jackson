@@ -14,7 +14,7 @@ class LineFilter(LogicShapeFilter):
         self.attr = attribute
         self.direction = direction
 
-    def make_filtering(self, source_filter: Dict[Any, DetectedObject]):
+    def make_filtering(self, source_filter: Dict[Any, DetectedObject], current_frame = None):
         output = dict()
         for track_id, detectedObject in source_filter.items():
             trajectory_list = detectedObject.get_trajectories()
@@ -25,9 +25,9 @@ class LineFilter(LogicShapeFilter):
                 first_traj = next(iterator)
                 second_traj = next(iterator)
                 if self.direction == 0:
-                    output[detectedObject] = output_set
+                    output[detectedObject.get_track_id()] = detectedObject
                 elif self.direction == self._check_crossing_direction(first_traj, second_traj):
-                    output[detectedObject] = output_set
+                    output[detectedObject.get_track_id()] = detectedObject
                 else:
                     pass
 
