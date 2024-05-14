@@ -3,7 +3,6 @@ test.py
 *.log
 frames
 .vscode
-config/constant.py
 test.jpg
 *.jpg
 *.txt
