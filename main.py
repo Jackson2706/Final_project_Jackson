@@ -10,7 +10,9 @@ from config.constant import CAMERA_URL, MAX_FRAME_QUEUE_SIZE, YOLOV5_ONNX_MODEL_
 from aicore.detection.yolo_onnx.yolov5.yolov5_onnx import Yolov5_Onnx
 from aicore.detection.SSD_onnx.SSD300.SSD300_onnx_detector import SSD300OnnxDetector
 from aicore.detection.SSD_onnx.SSDLite320.SSD320_onnx_detector import SSD320OnnxDetector
-from aicore.tracking.deep_sort.tracker import DeepSortInference, draw_bboxes
+from aicore.tracking.deep_sort.tracker import DeepSortInference
+from aicore.tracking.kalman_filter.KalmanFilterTracking import KalmanFilterTracking
+from aicore.tracking.utils import draw_bboxes
 ## Test
 from aicore.logic_shape_filter.filter.LineFilter import LineFilter
 from aicore.component.Line import Line
@@ -43,11 +45,12 @@ elif SELECTED_DETECTOR_NAME == "SSD320_ONNX":
                                           label_list=SSD320_ONNX_LABEL_LIST, selected_categories=SELECTED_CATEGORY)
 else:
     vehicle_detector = None
-if SELECTED_TRACKER_NAME == "DEEPSORT":
-    vehicle_tracker = DeepSortInference(config_path=DEEPSORT_CONFIG_PATH)
-else:
-    vehicle_tracker = None
-
+# if SELECTED_TRACKER_NAME == "DEEPSORT":
+#     vehicle_tracker = DeepSortInference(config_path=DEEPSORT_CONFIG_PATH)
+# else:
+#     print("kalmanFlter")
+#     vehicle_tracker = KalmanFilterTracking(20)
+vehicle_tracker = KalmanFilterTracking(1)
 for frame in cap.read_frame():
     result = vehicle_detector.run_native_inference(frame)
     result = vehicle_tracker.update(bboxes_traject=result, image=frame)
@@ -56,7 +59,7 @@ for frame in cap.read_frame():
 
     cv2.imshow("test", frame)
     filter_result = linefilter.make_filtering(result)
-    print(len(filter_result))
+    # print(len(filter_result))
     if cv2.waitKey(1) == ord("q"):
         break
 
