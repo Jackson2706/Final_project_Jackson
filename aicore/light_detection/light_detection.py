@@ -31,35 +31,33 @@ class LightDetector:
         x_max, y_max = self._location.get_bottom_right_point().get_point()
         raw_image = frame[y_min:y_max, x_min:x_max]
 
-        # Resize the image to desired dimensions
-        img = cv2.resize(raw_image, self._desired_dim, interpolation=cv2.INTER_LINEAR)
+        # Resize the image to desired dimensions directly in cv2.resize function
+        img = cv2.resize(raw_image, self._desired_dim)
 
         # Convert the image to HSV color space
         img_hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
 
-        # Define masks for detecting red and yellow colors
-        # Lower mask for red (0-10)
-        lower_red = np.array([0, 70, 50])
-        upper_red = np.array([10, 255, 255])
-        mask0 = cv2.inRange(img_hsv, lower_red, upper_red)
+        # Define ranges for red and yellow colors
+        red_lower_range = np.array([[0, 70, 50], [10, 255, 255]])  # Lower range for red (0-10)
+        red_upper_range = np.array([[170, 70, 50], [180, 255, 255]])  # Upper range for red (170-180)
+        yellow_range = np.array([[21, 39, 64], [40, 255, 255]])  # Range for yellow color
 
-        # Upper mask for red (170-180)
-        lower_red1 = np.array([170, 70, 50])
-        upper_red1 = np.array([180, 255, 255])
-        mask1 = cv2.inRange(img_hsv, lower_red1, upper_red1)
-
-        # Mask for yellow color
-        lower_yellow = np.array([21, 39, 64])
-        upper_yellow = np.array([40, 255, 255])
-        mask2 = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
+        # Generate masks for red and yellow colors
+        mask_red = cv2.inRange(img_hsv, red_lower_range[0], red_lower_range[1])  # Mask for lower red range
+        mask_red += cv2.inRange(img_hsv, red_upper_range[0], red_upper_range[1])  # Mask for upper red range
+        mask_yellow = cv2.inRange(img_hsv, yellow_range[0], yellow_range[1])  # Mask for yellow color
 
         # Combine masks to detect red and yellow pixels
-        mask = mask0 + mask1 + mask2
+        mask = mask_red + mask_yellow
 
         # Calculate the percentage of red values in the masked region
-        rate = np.count_nonzero(mask) / (self._desired_dim[0] * self._desired_dim[1])
+        red_pixel_count = np.count_nonzero(mask)
 
-        # Check if the percentage exceeds the threshold
+        # Calculate the total number of pixels in the region
+        total_pixels = self._desired_dim[0] * self._desired_dim[1]
+
+        # Compare the percentage of red values with the threshold
+        rate = red_pixel_count / total_pixels
         if rate > self._threshold:
             return True
         else:
