@@ -25,12 +25,14 @@ class Trajectory:
         self._conf = conf
         self._timestamp = time_stamp
 
-
     def get_trajectory(self):
         return [self._x_center, self._y_center, self._width, self._height, self._label, self._conf, self._timestamp]
 
     def get_position(self):
         return Point(self._x_center, self._y_center)
+
+    def get_label(self):
+        return self._label
 
     def get_bounding_box(self):
         """

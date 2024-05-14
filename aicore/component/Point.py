@@ -6,5 +6,11 @@ class Point:
     def get_point(self):
         return self._X, self._Y
 
+    def get_x(self):
+        return self._X
+
+    def get_y(self):
+        return self._Y
+
     def __str__(self):
         return f"Point: ({self._X}, {self._Y}"
