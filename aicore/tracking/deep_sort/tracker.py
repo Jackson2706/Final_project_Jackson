@@ -57,6 +57,7 @@ class DeepSortInference:
             outputs = self.deepsort.update(xywhs, confss, time_stamp_list, image)
 
             for center_x, center_y, w, h, track_id, conf, timestamp in list(outputs):
+                track_id = track_id.real if isinstance(track_id, complex) else int(track_id)
                 label = self.search_label(center_x=center_x, center_y=center_y,
                                           bboxes_xyxy=bboxes, max_dist_threshold=20.0)
                 center_x = int(center_x.real) if isinstance(center_x, complex) else int(center_x)

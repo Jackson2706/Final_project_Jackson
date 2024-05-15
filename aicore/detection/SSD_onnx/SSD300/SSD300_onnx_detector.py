@@ -31,7 +31,7 @@ class SSD300OnnxDetector(SSDDetector):
 
         return input_tensor
 
-    def _postprocessing(self, out_data):
+    def _postprocessing(self, out_data, timestamps):
         detections = []
         bbox_list, conf_list, label_list = out_data
         for box, conf, label in zip(bbox_list, conf_list, label_list):
@@ -46,7 +46,7 @@ class SSD300OnnxDetector(SSDDetector):
                     height=(y_max - y_min) * self.resize_ratio_h,
                     label=self.label_list[label],
                     conf=conf,
-                    time_stamp=datetime.now()
+                    time_stamp=timestamps
                 )
             )
         if detections:

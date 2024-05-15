@@ -48,6 +48,8 @@ class KalmanFilterTracking:
             tracking_object_copy = self.tracking_object.copy()
             bboxes_traject_copy = bboxes_traject.copy()
             for track_id, obj2 in tracking_object_copy.items():
+                if len(obj2.get_trajectories()) == 0:
+                    continue
                 pt2 = obj2.get_last_trajectory().get_position()
                 object_exists = False
                 for obj in bboxes_traject_copy:

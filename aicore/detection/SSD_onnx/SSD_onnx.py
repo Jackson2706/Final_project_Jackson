@@ -16,7 +16,7 @@ class SSDDetector(ABC):
     def _preprocessing(self, frame):
         pass
 
-    def _postprocessing(self, out_data):
+    def _postprocessing(self, out_data, timestamps):
         pass
 
     def _execute(self, in_data):
@@ -25,10 +25,10 @@ class SSDDetector(ABC):
             {self.session.get_inputs()[0].name: in_data}
         )
 
-    def run_native_inference(self, frame):
+    def run_native_inference(self, frame, timestamps):
         input_data = self._preprocessing(frame=frame)
         output_data = self._execute(in_data=input_data)
-        results = self._postprocessing(out_data=output_data)
+        results = self._postprocessing(out_data=output_data, timestamps=timestamps)
         return results
 
     def draw_box(self, frame, results):
